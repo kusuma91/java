@@ -1,0 +1,55 @@
+<project name="connectfour" default="first">
+  <property environment="env" />
+   <target name="first">
+      <echo>os=${os}</echo> 
+      <antcall target="${os}" />
+   </target>
+   
+   <target name="clean">
+     <delete dir="target" quiet="true" />
+   </target>
+   
+   <target name="compile">
+     <echo>${env.BUILD_NUMBER}</echo>
+     <mkdir dir="target/classes" />
+     <javac srcdir="src" destdir="target/classes" />
+   </target>
+   
+    <target name="sleep">
+      <echo message="Sleeping for a while si you can see the build in the new dashboard" />
+      <sleep seconds="30" />
+    </target>
+    
+    <target name="test" depends="compile">
+      <mkdir dir="target/test-classes" />
+      <javac srcdir="test" destdir="target/test-classes">
+        <classpath>
+          <pathelement location="target/classes" />
+          <pathelement location="lib/junit.jar" />
+        </classpath>
+      </javac>
+      
+      <mkdir dir="target/test-results" />
+      <junit haltonfailure="no" printsummary="on">
+        <classpath>
+         <pathelement location="target/classes"/>
+          <pathelement location="lib/junit.jar"/>
+           <pathelement location="target/test-classes"/>
+        </classpath>
+        <formatter type="brief" usefile="false" />
+        <formatter type="xnl" />
+        <batchtest todir="target/test-results">
+          <fileset dir="target/test-classes" includes="**/*Test.class" />
+        </batchtest>
+      </junit>
+    </target>
+    
+    <target name="windows" depends="clean, compile, sleep, test, jar">
+    </target>
+   
+   <target name="linux">
+     <echo> calling build on linux machine </echo>
+     <sleep seconds="30" />
+     <fail msg="fail test of misconfiguration project" />
+   </target>
+</project>
